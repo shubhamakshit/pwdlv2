@@ -7,12 +7,13 @@ if os.path.exists('./main.m3u8'): os.system('rm -f ./main.m3u8') # remove alread
 if os.path.exists('./enc.key'):   os.system('rm -f ./enc.key')   # remove already existing key file
 
 # Check if command line arguments are provided correctly
-if len(sys.argv) < 2:
-    print("Usage: python script.py <KEY>")
+if len(sys.argv) < 3:
+    print("Usage: python script.py <KEY> <NAME>")
     sys.exit(1)
 
-# Extract the key from command line arguments
+# Extract the key and name from command line arguments
 KEY = sys.argv[1]
+NAME = sys.argv[2]
 
 # Generate the final URL using the key
 final_url = find_final_url(f'http://psitoffers.store/1dm.php?vid={KEY}')
@@ -25,13 +26,13 @@ print('\n'.join(final_url.split('&')))
 os.system(f"aria2c '{final_url.replace('master.m3u8', 'hls/720/main.m3u8')}'")
 os.system('python3 post.py')
 
-#Extract URL and query parameters
+# Extract URL and query parameters
 url, query = remove_query_params(final_url)
 
 # Run dl.py script with the key and signature
 os.system(f"python3 dl.py {KEY} {query['Signature'][0]}")
 
-os.system(f'ffmpeg -allowed_extensions ALL -y -i main.m3u8 -c copy {KEY}.mp4')
+os.system(f'ffmpeg -allowed_extensions ALL -y -i main.m3u8 -c copy {NAME}.mp4')
 
 os.system('rm -rf *ts*')
 
