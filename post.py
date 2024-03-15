@@ -39,7 +39,8 @@ def replace_api_penpencil_url(m3u8_content):
         #return modified m3u8 content
         return [m3u8_content, url_original]
 
-with open('main.m3u8','r') as mfile:
+def post_op():
+     with open('main.m3u8','r') as mfile:
         m3u8_content = mfile.read()
         #print(m3u8_content) # DEBUG
 

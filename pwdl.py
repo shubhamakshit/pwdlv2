@@ -2,6 +2,7 @@ import sys
 from red import find_final_url
 import os
 from parsev3 import remove_query_params
+from post import extract_last_segment_number, post_op
 
 if os.path.exists('./main.m3u8'): os.system('rm -f ./main.m3u8') # remove already existing m3u8 file
 if os.path.exists('./enc.key'):   os.system('rm -f ./enc.key')   # remove already existing key file
@@ -24,13 +25,21 @@ print('\n'.join(final_url.split('&')))
 
 # Download using aria2c
 os.system(f"aria2c '{final_url.replace('master.m3u8', 'hls/720/main.m3u8')}'")
-os.system('python3 post.py')
+if os.path.exists('main.m3u8'):
+    try:
+        with open('main.m3u8','r') as mfile:
+            m3u8_content = mfile.read()
+            # Extract URL and query parameters
+            url, query = remove_query_params(final_url)
 
-# Extract URL and query parameters
-url, query = remove_query_params(final_url)
+            # Run dl.py script with the key and signature
+            print(f"{os.system('clear')} Command [ python3 dlv2.py {KEY} {extract_last_segment_number(m3u8_content)} {query['Signature'][0]} ]")
+            os.system(f"python3 dlv2.py {KEY} {extract_last_segment_number(m3u8_content)} {query['Signature'][0]}")
+            exit()
+            post_op()
+    except Exception as e:
+        print(f"Error occured: {e}")
 
-# Run dl.py script with the key and signature
-os.system(f"python3 dl.py {KEY} {query['Signature'][0]}")
 
 os.system(f'ffmpeg -allowed_extensions ALL -y -i main.m3u8 -c copy {NAME}.mp4')
 
