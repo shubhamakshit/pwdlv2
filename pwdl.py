@@ -35,7 +35,6 @@ if os.path.exists('main.m3u8'):
             # Run dl.py script with the key and signature
             print(f"{os.system('clear')} Command [ python3 dlv2.py {KEY} {extract_last_segment_number(m3u8_content)} {query['Signature'][0]} ]")
             os.system(f"python3 dlv2.py {KEY} {extract_last_segment_number(m3u8_content)} {query['Signature'][0]}")
-            exit()
             post_op()
     except Exception as e:
         print(f"Error occured: {e}")
